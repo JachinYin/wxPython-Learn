@@ -101,6 +101,7 @@ class MainWindow(wx.Frame):
         self.control.Paste()
 
     def OnDelete(self,e):
+        '''删除选中的文本'''
         i,j = self.control.GetSelection()
         self.control.Replace(i,j,'')
 
