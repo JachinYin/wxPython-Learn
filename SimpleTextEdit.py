@@ -6,7 +6,7 @@ Data: 2017- 11- 25
 '''
 import os
 import wx
-
+import time
 
 class MainWindow(wx.Frame):
     def __init__(self, parent, title):
@@ -39,6 +39,7 @@ class MainWindow(wx.Frame):
         menuDelete = editMenu.Append(wx.ID_DELETE,'删除','删除选中的内容')
         editMenu.AppendSeparator()
         menuChoseAll = editMenu.Append(wx.ID_SELECTALL,'全选','全选文本框的内容')
+        menuDate = editMenu.Append(wx.ID_ANY,'时间/日期','插入时间/日期')
 
         menuFont = formatMenu.Append(wx.ID_SELECT_FONT,'字体','选择字体')
 
@@ -66,14 +67,13 @@ class MainWindow(wx.Frame):
         self.Bind(wx.EVT_MENU, self.OnPaste, menuPaste)
         self.Bind(wx.EVT_MENU, self.OnDelete, menuDelete)
         self.Bind(wx.EVT_MENU, self.OnChoseAll, menuChoseAll)
+        self.Bind(wx.EVT_MENU,self.OnDate,menuDate)
 
         self.Bind(wx.EVT_MENU,self.OnStatus,menuStatus)
 
         self.Bind(wx.EVT_MENU, self.OnAbout, menuAbout)
 
         self.Bind(wx.EVT_MENU,self.OnFont,menuFont)
-
-
 
         self.SetStatusText('状态栏')
 
@@ -118,11 +118,15 @@ class MainWindow(wx.Frame):
     def OnDelete(self,e):
         '''删除选中的文本'''
         i,j = self.control.GetSelection()
-        self.control.Replace(i,j,'')
+        #self.control.Replace(i,j,'')
+        self.control.Remove(i,j)
 
     def OnChoseAll(self,e):
         self.control.SelectAll()
 
+    def OnDate(self,e):
+        date = time.strftime("%H:%M:%S %Y/%m/%d", time.localtime())
+        self.control.WriteText(date)
 
     def OnFont(self,e):
         '''字体设置'''
@@ -135,7 +139,6 @@ class MainWindow(wx.Frame):
         flg.Destroy()
 
     def OnStatus(self,e):
-        print 'f'
         if self.shst.IsChecked():
             self.StatusBar.Show()
         else:
