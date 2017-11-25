@@ -24,11 +24,15 @@ class MainWindow(wx.Frame):
 
         # wx.ID_ABOUT and wx.ID_EXIT are standard ids provided by wxWidgets.
         menuOpen = filemenu.Append(wx.ID_OPEN, "&打开","打开一个需要编辑的文件")
+        menuSave = filemenu.Append(wx.ID_OPEN, "&保存","保存一个已经编辑好的文件")
         menuAbout = filemenu.Append(wx.ID_ABOUT, "&关于","这是一个简单的文本编辑器")
         menuExit = filemenu.Append(wx.ID_EXIT,"&退出","退出程序")
 
+        menuClear = editMenu.Append(wx.ID_CLEAR,'清除','清除文本框的全部内容')
+        menuCut = editMenu.Append(wx.ID_CUT,'剪切','剪切选中文本')
         menuCopy = editMenu.Append(wx.ID_COPY,'复制','复制选中文本')
         menuPaste = editMenu.Append(wx.ID_PASTE,'粘贴','粘贴剪贴板的内容')
+        menuChoseAll = editMenu.Append(wx.ID_SELECTALL,'全选','全选文本框的内容')
 
         # Creating the menubar.
         menuBar = wx.MenuBar()
@@ -38,10 +42,15 @@ class MainWindow(wx.Frame):
 
         # Set events.
         self.Bind(wx.EVT_MENU, self.OnOpen, menuOpen)
+        self.Bind(wx.EVT_MENU, self.OnSave, menuSave)
         self.Bind(wx.EVT_MENU, self.OnAbout, menuAbout)
         self.Bind(wx.EVT_MENU, self.OnExit, menuExit)
+
+        self.Bind(wx.EVT_MENU, self.OnClear, menuClear)
+        self.Bind(wx.EVT_MENU, self.OnCut, menuCut)
         self.Bind(wx.EVT_MENU, self.OnCopy, menuCopy)
         self.Bind(wx.EVT_MENU, self.OnPaste, menuPaste)
+        self.Bind(wx.EVT_MENU, self.OnChoseAll, menuChoseAll)
 
         self.SetStatusText('状态栏')
 
@@ -49,7 +58,7 @@ class MainWindow(wx.Frame):
 
     def OnOpen(self,e):
         """ Open a file"""
-        dlg = wx.FileDialog(self, "选择一个文件", self.dirname, "", "*.*", wx.FD_OPEN)
+        dlg = wx.FileDialog(self, "选择一个文件", self.dirname, "", "*.txt", wx.FD_OPEN)
         if dlg.ShowModal() == wx.ID_OK:
             self.filename = dlg.GetFilename()
             self.dirname = dlg.GetDirectory()
@@ -58,21 +67,39 @@ class MainWindow(wx.Frame):
             f.close()
         dlg.Destroy()
 
+    def OnSave(self,e):
+        """ Save a file"""
+        dlg = wx.FileDialog(self, "保存", self.dirname, "", "*.txt", wx.FD_SAVE)
+        if dlg.ShowModal() == wx.ID_OK:
+            self.filename = dlg.GetPath()
+            self.control.SaveFile(self.filename)
+        dlg.Destroy()
+
     def OnAbout(self,e):
         # A message dialog box with an OK button. wx.OK is a standard ID in wxWidgets.
-        dlg = wx.MessageDialog( self, "一个小型的文本编辑器\nAuthor:柒夕影", "关于简单编辑器", wx.OK)
+        #dlg = wx.MessageBox("一个小型的文本编辑器\nBy:柒夕影", "关于简单编辑器", wx.OK)
+        dlg = wx.MessageDialog(self, "一个小型的文本编辑器\n最后更新:2017-11-25\n\nBy:柒夕影", "关于 简单编辑器", wx.OK)
         dlg.ShowModal() # Show it
         dlg.Destroy() # finally destroy it when finished.
 
     def OnExit(self,e):
         self.Close(True)  # Close the frame.
 
+
+    def OnClear(self,e):
+        self.control.Clear()
+
+    def OnCut(self,e):
+        self.control.Cut()
+
     def OnCopy(self,e):
-        print e
+        self.control.Copy()
 
     def OnPaste(self,e):
-        pass
+        self.control.Paste()
 
+    def OnChoseAll(self,e):
+        self.control.SelectAll()
 
 app = wx.App(False)
 frame = MainWindow(None, "简单编辑器")
