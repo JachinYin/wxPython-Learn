@@ -32,6 +32,7 @@ class MainWindow(wx.Frame):
         menuCut = editMenu.Append(wx.ID_CUT,'剪切','剪切选中文本')
         menuCopy = editMenu.Append(wx.ID_COPY,'复制','复制选中文本')
         menuPaste = editMenu.Append(wx.ID_PASTE,'粘贴','粘贴剪贴板的内容')
+        menuDelete = editMenu.Append(wx.ID_DELETE,'删除','删除选中的内容')
         menuChoseAll = editMenu.Append(wx.ID_SELECTALL,'全选','全选文本框的内容')
 
         # Creating the menubar.
@@ -50,6 +51,7 @@ class MainWindow(wx.Frame):
         self.Bind(wx.EVT_MENU, self.OnCut, menuCut)
         self.Bind(wx.EVT_MENU, self.OnCopy, menuCopy)
         self.Bind(wx.EVT_MENU, self.OnPaste, menuPaste)
+        self.Bind(wx.EVT_MENU, self.OnDelete, menuDelete)
         self.Bind(wx.EVT_MENU, self.OnChoseAll, menuChoseAll)
 
         self.SetStatusText('状态栏')
@@ -97,6 +99,10 @@ class MainWindow(wx.Frame):
 
     def OnPaste(self,e):
         self.control.Paste()
+
+    def OnDelete(self,e):
+        i,j = self.control.GetSelection()
+        self.control.Replace(i,j,'')
 
     def OnChoseAll(self,e):
         self.control.SelectAll()
