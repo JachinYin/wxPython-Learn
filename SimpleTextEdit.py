@@ -27,8 +27,10 @@ class MainWindow(wx.Frame):
         helpMenu = wx.Menu()
 
         # wx.ID_ABOUT and wx.ID_EXIT are standard ids provided by wxWidgets.
-        menuOpen = filemenu.Append(wx.ID_OPEN, "&打开","打开一个需要编辑的文件")
-        menuSave = filemenu.Append(wx.ID_SAVE, "&保存","保存一个已经编辑好的文件")
+        menuOpen = filemenu.Append(wx.ID_OPEN, "打开","打开一个需要编辑的文件")
+        menuSave = filemenu.Append(wx.ID_SAVE, "保存","保存一个已经编辑好的文件")
+        filemenu.AppendSeparator()
+        menuPrint = filemenu.Append(wx.ID_PRINT,"打印","打印当前文件")
         filemenu.AppendSeparator()
         menuExit = filemenu.Append(wx.ID_EXIT,"&退出","退出程序")
 
@@ -62,6 +64,7 @@ class MainWindow(wx.Frame):
         # Set events.
         self.Bind(wx.EVT_MENU, self.OnOpen, menuOpen)
         self.Bind(wx.EVT_MENU, self.OnSave, menuSave)
+        self.Bind(wx.EVT_MENU, self.OnPrint,menuPrint)
         self.Bind(wx.EVT_MENU, self.OnExit, menuExit)
 
         self.Bind(wx.EVT_MENU, self.OnUndo, menuUndo)
@@ -102,6 +105,12 @@ class MainWindow(wx.Frame):
             self.control.SaveFile(self.filename)
         dlg.Destroy()
 
+    def OnPrint(self,e):
+        #TODO 打印功能
+        plg = wx.PrintDialog(self)
+        if plg.ShowModal() == wx.ID_OK:
+            print '打印'
+        plg.Destroy()
 
     def OnExit(self,e):
         self.Close(True)  # Close the frame.
