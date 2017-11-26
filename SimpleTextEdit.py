@@ -7,6 +7,7 @@ Data: 2017- 11- 25
 import os
 import wx
 import time
+import re
 
 class MainWindow(wx.Frame):
     def __init__(self, parent, title):
@@ -14,7 +15,7 @@ class MainWindow(wx.Frame):
 
         wx.Frame.__init__(self, parent, title=title, size=(600,400)
                           ,style = wx.DEFAULT_FRAME_STYLE,pos = (400,100))
-        self.control = wx.TextCtrl(self, style=wx.TE_MULTILINE)
+        self.control = wx.TextCtrl(self, style=wx.TE_MULTILINE|wx.TE_RICH)
         self.CreateStatusBar() # A StatusBar in the bottom of the window
 
         #btn = wx.Button(self,pos = (200,300))
@@ -37,6 +38,8 @@ class MainWindow(wx.Frame):
         menuCopy = editMenu.Append(wx.ID_COPY,'复制','复制选中文本')
         menuPaste = editMenu.Append(wx.ID_PASTE,'粘贴','粘贴剪贴板的内容')
         menuDelete = editMenu.Append(wx.ID_DELETE,'删除','删除选中的内容')
+        editMenu.AppendSeparator()
+        menuSearch = editMenu.Append(wx.ID_HELP_SEARCH,'查找','查找内容')
         editMenu.AppendSeparator()
         menuChoseAll = editMenu.Append(wx.ID_SELECTALL,'全选','全选文本框的内容')
         menuDate = editMenu.Append(wx.ID_ANY,'时间/日期','插入时间/日期')
@@ -66,6 +69,7 @@ class MainWindow(wx.Frame):
         self.Bind(wx.EVT_MENU, self.OnCopy, menuCopy)
         self.Bind(wx.EVT_MENU, self.OnPaste, menuPaste)
         self.Bind(wx.EVT_MENU, self.OnDelete, menuDelete)
+        self.Bind(wx.EVT_MENU, self.OnSearch, menuSearch)
         self.Bind(wx.EVT_MENU, self.OnChoseAll, menuChoseAll)
         self.Bind(wx.EVT_MENU,self.OnDate,menuDate)
 
@@ -150,6 +154,29 @@ class MainWindow(wx.Frame):
         dlg = wx.MessageDialog(self, "一个小型的文本编辑器\n最后更新:2017-11-25\n\nBy:柒夕影", "关于 简单编辑器", wx.OK)
         dlg.ShowModal() # Show it
         dlg.Destroy() # finally destroy it when finished.
+
+
+    def OnSearch(self,e):
+        self.search = wx.Frame(self,title = '查找', size=(400,200)
+                          ,style = wx.DEFAULT_FRAME_STYLE,pos = (480,180))
+        self.search.SetBackgroundColour('white')
+        self.find = wx.TextCtrl(self.search,style=wx.TE_LEFT,size = (250,25),pos = (40,40))
+
+        btn_search = wx.Button(self.search,wx.ID_ANY,'查找',size = (35,25),pos = (300,40))
+        btn_search.Bind(wx.EVT_BUTTON,self.Search)
+        self.search.Show()
+
+    def Search(self,e):
+        keyw = self.find.GetValue().encode('utf-8')
+        text = self.control.GetValue().encode('utf-8')
+        reg = r".*?(%s){1,}.*?"%keyw
+        results = re.findall(reg,text)
+        for item in results:
+            i,j = self.control.GetSelection()
+            print i,j
+            self.control.SetSelection(i,j)
+            print item
+
 
 app = wx.App(False)
 frame = MainWindow(None, "简单编辑器")
