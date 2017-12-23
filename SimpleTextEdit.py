@@ -190,3 +190,7 @@ class MainWindow(wx.Frame):
 app = wx.App(False)
 frame = MainWindow(None, "简单编辑器")
 app.MainLoop()
+
+
+#Python-Algorithm
+#一些典型问题算法的python实现
